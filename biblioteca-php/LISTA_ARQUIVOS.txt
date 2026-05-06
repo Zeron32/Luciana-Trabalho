@@ -1,0 +1,349 @@
+═══════════════════════════════════════════════════════════════════════════
+  SISTEMA DE BIBLIOTECA - LISTA DE ARQUIVOS
+═══════════════════════════════════════════════════════════════════════════
+
+📂 biblioteca-php/
+│
+├── 📁 config/                        [Configurações do Sistema]
+│   └── dados.php                     Conexão com banco + funções utilitárias
+│
+├── 📁 includes/                      [Componentes Reutilizáveis]
+│   └── menu.php                      Menu de navegação do sistema
+│
+├── 📄 database.sql                   Script SQL para criar banco e tabelas
+│
+├── 🔐 AUTENTICAÇÃO
+│   ├── index.php                     Página de login
+│   └── logout.php                    Script de logout
+│
+├── 📊 DASHBOARD
+│   └── dashboard.php                 Painel principal com estatísticas
+│
+├── 📚 MÓDULO LIVROS (CRUD Completo)
+│   ├── livros.php                    Listagem de livros + busca
+│   ├── livro_cadastrar.php           Formulário de cadastro
+│   ├── livro_editar.php              Formulário de edição
+│   └── livro_excluir.php             Script de exclusão
+│
+├── 👥 MÓDULO USUÁRIOS
+│   └── usuarios.php                  Listagem de usuários
+│
+├── 🔄 MÓDULO EMPRÉSTIMOS
+│   ├── emprestimos.php               Listagem de empréstimos
+│   ├── emprestimo_cadastrar.php      Registrar novo empréstimo
+│   └── devolucao.php                 Registrar devolução de livro
+│
+├── ⚙️ CONFIGURAÇÕES SERVIDOR
+│   └── .htaccess                     Configurações do Apache
+│
+└── 📖 DOCUMENTAÇÃO
+    ├── README.md                     Documentação geral do projeto
+    ├── INSTALACAO.md                 Guia passo a passo de instalação
+    ├── DESENVOLVEDOR.md              Guia técnico para desenvolvedores
+    ├── DIAGRAMAS.txt                 Diagramas UML e fluxogramas
+    └── LISTA_ARQUIVOS.txt            Este arquivo
+
+
+═══════════════════════════════════════════════════════════════════════════
+  DESCRIÇÃO DETALHADA DOS ARQUIVOS
+═══════════════════════════════════════════════════════════════════════════
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ config/dados.php                                                      │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Define constantes de conexão com o banco (host, user, pass, db)    │
+│ • Cria conexão MySQLi                                                 │
+│ • Inicia sessões PHP                                                  │
+│ • Funções utilitárias:                                                │
+│   - verificarLogin()        → Verifica se usuário está logado         │
+│   - getNomeUsuario()        → Retorna nome do usuário da sessão       │
+│   - isAdmin()               → Verifica se é administrador             │
+│   - formatarData()          → Converte data Y-m-d para d/m/Y          │
+│   - calcularDiasAtraso()    → Calcula dias de atraso                  │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ includes/menu.php                                                     │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Menu de navegação usando Bootstrap Navbar                           │
+│ • Links para: Dashboard, Livros, Usuários, Empréstimos               │
+│ • Dropdown do usuário com opção de logout                            │
+│ • Incluído em todas as páginas internas do sistema                   │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ database.sql                                                          │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Cria banco de dados biblioteca_db                                   │
+│ • Cria tabelas: livros, usuarios, emprestimos                        │
+│ • Insere dados de exemplo:                                            │
+│   - 1 usuário administrador (admin@biblioteca.com / admin123)        │
+│   - 4 usuários de teste                                               │
+│   - 8 livros de exemplo                                               │
+│   - 4 empréstimos de exemplo                                          │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ index.php                                                             │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Página de login do sistema                                          │
+│ • Formulário com email e senha                                        │
+│ • Validação usando MD5 (recomenda-se melhorar para password_hash)    │
+│ • Armazena dados do usuário em sessão                                 │
+│ • Redireciona para dashboard.php após login bem-sucedido             │
+│ • Design responsivo com Bootstrap                                     │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ logout.php                                                            │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Destroi a sessão do usuário                                         │
+│ • Redireciona para a página de login                                  │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ dashboard.php                                                         │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Painel principal do sistema                                         │
+│ • Exibe 4 cards com estatísticas:                                     │
+│   - Total de livros cadastrados                                       │
+│   - Total de usuários                                                 │
+│   - Empréstimos ativos                                                │
+│   - Empréstimos atrasados                                             │
+│ • Tabela com os 5 empréstimos mais recentes                          │
+│ • Indica visualmente empréstimos atrasados                           │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ livros.php                                                            │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Listagem de todos os livros cadastrados                            │
+│ • Barra de busca por título, autor ou ISBN                           │
+│ • Tabela mostrando:                                                   │
+│   - ID, Título, Autor, ISBN, Editora, Ano                            │
+│   - Quantidade disponível (badge verde/vermelho)                     │
+│   - Localização na biblioteca                                         │
+│ • Botões de ação: Editar (amarelo) e Excluir (vermelho)             │
+│ • Link para cadastrar novo livro                                      │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ livro_cadastrar.php                                                   │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Formulário de cadastro de novo livro                               │
+│ • Campos:                                                             │
+│   - Título * (obrigatório)                                            │
+│   - Autor * (obrigatório)                                             │
+│   - ISBN, Editora, Ano de Publicação                                 │
+│   - Quantidade, Localização                                           │
+│   - Categoria (select com opções pré-definidas)                      │
+│ • Validação de campos obrigatórios                                    │
+│ • Quantidade disponível = quantidade inicial                          │
+│ • Redireciona para listagem após cadastro                            │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ livro_editar.php                                                      │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Formulário de edição de livro existente                            │
+│ • Recebe ID via GET (?id=123)                                         │
+│ • Carrega dados atuais do livro                                       │
+│ • Permite alterar todos os campos                                     │
+│ • Ajusta quantidade disponível automaticamente se quantidade mudar   │
+│ • Validação de campos obrigatórios                                    │
+│ • Redireciona para listagem após salvar                              │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ livro_excluir.php                                                     │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Script de exclusão de livro                                         │
+│ • Recebe ID via GET (?id=123)                                         │
+│ • Verifica se existem empréstimos ativos para o livro                │
+│ • Se houver empréstimos ativos, NÃO permite exclusão                 │
+│ • Se não houver, executa DELETE no banco                             │
+│ • Redireciona para listagem com mensagem de sucesso ou erro          │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ usuarios.php                                                          │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Listagem de todos os usuários do sistema                           │
+│ • Tabela mostrando:                                                   │
+│   - ID, Nome, Email, CPF, Telefone                                   │
+│   - Tipo (administrador/bibliotecário/leitor) com badge colorido    │
+│   - Status (ativo/inativo)                                            │
+│   - Data de cadastro                                                  │
+│ • Não possui CRUD completo nesta versão (apenas visualização)        │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ emprestimos.php                                                       │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Listagem de todos os empréstimos                                    │
+│ • Tabela mostrando:                                                   │
+│   - ID, Livro (título + autor), Usuário                              │
+│   - Data empréstimo, Data prevista devolução                         │
+│   - Data devolução (se já devolvido)                                  │
+│   - Status com badge (ativo/atrasado/devolvido)                      │
+│ • Botão "Devolver" para empréstimos ativos                           │
+│ • Calcula e exibe dias de atraso automaticamente                     │
+│ • Link para registrar novo empréstimo                                 │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ emprestimo_cadastrar.php                                              │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Formulário de registro de novo empréstimo                          │
+│ • Select de livros (mostra apenas livros disponíveis)                │
+│ • Select de usuários (mostra apenas leitores ativos)                 │
+│ • Campo de data de empréstimo (padrão: hoje)                         │
+│ • Select de período (7, 14, 21 ou 30 dias)                           │
+│ • Calcula automaticamente data prevista de devolução                 │
+│ • Usa transação para:                                                 │
+│   1. Inserir registro em emprestimos                                 │
+│   2. Decrementar quantidade disponível do livro                      │
+│ • Redireciona para listagem após sucesso                             │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ devolucao.php                                                         │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Tela de confirmação de devolução                                    │
+│ • Recebe ID do empréstimo via GET (?id=123)                          │
+│ • Exibe informações do empréstimo:                                    │
+│   - Livro, Usuário, Datas                                            │
+│   - Alerta se estiver atrasado (com dias de atraso)                 │
+│   - Mensagem de sucesso se dentro do prazo                           │
+│ • Botão de confirmação                                                │
+│ • Usa transação para:                                                 │
+│   1. Atualizar emprestimo (data_devolucao, status)                   │
+│   2. Incrementar quantidade disponível do livro                      │
+│ • Redireciona para listagem após confirmação                         │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ .htaccess                                                             │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Configurações de segurança do Apache                                │
+│ • Bloqueia acesso direto a arquivos sensíveis (.sql, .md)            │
+│ • Protege a pasta config/                                             │
+│ • Configurações de charset UTF-8                                      │
+│ • Configurações de cache para performance                             │
+│ • Página de erro 404 personalizada                                    │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ README.md                                                             │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Visão geral do projeto                                              │
+│ • Instruções básicas de instalação                                    │
+│ • Lista de funcionalidades                                            │
+│ • Estrutura do projeto                                                │
+│ • Tecnologias utilizadas                                              │
+│ • Credenciais de acesso padrão                                        │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ INSTALACAO.md                                                         │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Guia passo a passo completo                                         │
+│ • Como instalar o XAMPP                                               │
+│ • Como copiar os arquivos                                             │
+│ • Como criar o banco de dados (2 métodos)                            │
+│ • Como acessar o sistema                                              │
+│ • Solução de problemas comuns                                         │
+│ • Dados de teste incluídos                                            │
+│ • Recomendações de segurança                                          │
+│ • Checklist de instalação                                             │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ DESENVOLVEDOR.md                                                      │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Documentação técnica para desenvolvedores                           │
+│ • Estrutura detalhada do projeto                                      │
+│ • Modelo de dados com explicação das tabelas                         │
+│ • Sistema de autenticação e sessões                                   │
+│ • Guia de uso do Bootstrap 5.3                                        │
+│ • Fluxo CRUD detalhado                                                │
+│ • Lógica de empréstimos e devoluções                                  │
+│ • Funções utilitárias disponíveis                                     │
+│ • Melhorias sugeridas para o sistema                                  │
+│ • Guia de debugging                                                    │
+│ • Recursos de aprendizado                                             │
+│ • Padrões e convenções de código                                      │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ DIAGRAMAS.txt                                                         │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Diagrama de Caso de Uso (ASCII art)                                │
+│ • Fluxo de Navegação do Sistema                                       │
+│ • Modelo Entidade-Relacionamento (ER)                                │
+│ • Arquitetura do Sistema (3 camadas)                                 │
+│ • Fluxo de Empréstimo e Devolução                                     │
+│ • Ciclo CRUD de Livros                                                │
+│ • Estados de um Empréstimo                                            │
+│ • Mapa de Tecnologias Utilizadas                                      │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────────────────────────────────────────────────────┐
+│ LISTA_ARQUIVOS.txt                                                    │
+├───────────────────────────────────────────────────────────────────────┤
+│ • Este arquivo                                                         │
+│ • Índice completo de todos os arquivos do projeto                    │
+│ • Descrição detalhada de cada arquivo                                │
+│ • Organização por módulos                                             │
+└───────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════
+  RESUMO DE FUNCIONALIDADES POR MÓDULO
+═══════════════════════════════════════════════════════════════════════════
+
+📚 LIVROS (CRUD Completo)
+  ✅ Listar livros
+  ✅ Cadastrar livro
+  ✅ Editar livro
+  ✅ Excluir livro
+  ✅ Buscar por título/autor/ISBN
+  ✅ Controle de quantidade disponível
+
+👥 USUÁRIOS
+  ✅ Listar usuários
+  ✅ Visualizar tipo e status
+  ⚠️  CRUD não implementado (apenas visualização)
+
+🔄 EMPRÉSTIMOS
+  ✅ Listar empréstimos
+  ✅ Registrar empréstimo
+  ✅ Registrar devolução
+  ✅ Calcular dias de atraso
+  ✅ Status visual (ativo/atrasado/devolvido)
+  ✅ Controle de disponibilidade automático
+
+📊 DASHBOARD
+  ✅ Estatísticas gerais
+  ✅ Empréstimos recentes
+  ✅ Alertas de atraso
+
+🔐 AUTENTICAÇÃO
+  ✅ Login com email e senha
+  ✅ Controle de sessão
+  ✅ Logout seguro
+  ✅ Verificação de login em todas as páginas
+
+
+═══════════════════════════════════════════════════════════════════════════
+  TOTAL DE ARQUIVOS
+═══════════════════════════════════════════════════════════════════════════
+
+  📄 Arquivos PHP: 14
+  🗄️  Arquivos SQL: 1
+  ⚙️  Arquivos Config: 2 (.htaccess, dados.php)
+  📖 Arquivos Documentação: 5
+
+  TOTAL: 22 arquivos
+
+═══════════════════════════════════════════════════════════════════════════

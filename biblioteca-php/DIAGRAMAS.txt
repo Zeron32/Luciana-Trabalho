@@ -1,0 +1,295 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                    SISTEMA DE BIBLIOTECA - DIAGRAMAS                      ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════
+  DIAGRAMA DE CASO DE USO
+═══════════════════════════════════════════════════════════════════════════
+
+                    ┌─────────────────────────┐
+                    │                         │
+                    │  Sistema de Biblioteca  │
+                    │                         │
+                    └─────────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+  ┌──────────┐         ┌──────────┐         ┌──────────┐
+  │  Fazer   │         │ Gerenciar│         │ Gerenciar│
+  │  Login   │         │  Livros  │         │Empréstimos│
+  └──────────┘         └──────────┘         └──────────┘
+                             │
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+        ▼                    ▼                    ▼
+  ┌──────────┐         ┌──────────┐         ┌──────────┐
+  │Cadastrar │         │  Editar  │         │ Excluir  │
+  │  Livro   │         │  Livro   │         │  Livro   │
+  └──────────┘         └──────────┘         └──────────┘
+
+        │                                          │
+        ▼                                          ▼
+  ┌──────────┐                              ┌──────────┐
+  │Registrar │                              │Registrar │
+  │Empréstimo│                              │Devolução │
+  └──────────┘                              └──────────┘
+
+═══════════════════════════════════════════════════════════════════════════
+  FLUXO DE NAVEGAÇÃO
+═══════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────┐
+  │ index.php   │  ◄─── Página Inicial (Login)
+  │   (Login)   │
+  └──────┬──────┘
+         │
+         │ [Login OK]
+         ▼
+  ┌──────────────┐
+  │dashboard.php │  ◄─── Painel Principal
+  │ (Dashboard)  │       - Estatísticas
+  └──────┬───────┘       - Empréstimos Recentes
+         │
+         ├────────────────┬────────────────┬──────────────┐
+         │                │                │              │
+         ▼                ▼                ▼              ▼
+  ┌────────────┐   ┌────────────┐  ┌────────────┐  ┌──────────┐
+  │ livros.php │   │usuarios.php│  │emprestimos │  │logout.php│
+  │  (Livros)  │   │ (Usuários) │  │    .php    │  │  (Sair)  │
+  └─────┬──────┘   └────────────┘  └─────┬──────┘  └──────────┘
+        │                                 │
+        ├──────────┬──────────┐          ├──────────┬──────────┐
+        │          │          │          │          │          │
+        ▼          ▼          ▼          ▼          ▼          ▼
+  ┌─────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
+  │Cadastrar│ │ Editar │ │Excluir │ │  Novo  │ │Devolver│ │        │
+  │  Livro  │ │ Livro  │ │ Livro  │ │Emprést.│ │ Livro  │ │        │
+  └─────────┘ └────────┘ └────────┘ └────────┘ └────────┘ └────────┘
+
+═══════════════════════════════════════════════════════════════════════════
+  MODELO ENTIDADE-RELACIONAMENTO (ER)
+═══════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────┐              ┌─────────────────────┐
+  │      LIVROS         │              │     USUÁRIOS        │
+  ├─────────────────────┤              ├─────────────────────┤
+  │ • id (PK)           │              │ • id (PK)           │
+  │ • titulo            │              │ • nome              │
+  │ • autor             │              │ • email             │
+  │ • isbn              │              │ • cpf               │
+  │ • editora           │              │ • telefone          │
+  │ • ano_publicacao    │              │ • endereco          │
+  │ • quantidade        │              │ • tipo              │
+  │ • qtd_disponivel    │              │ • senha             │
+  │ • categoria         │              │ • ativo             │
+  │ • localizacao       │              │ • data_cadastro     │
+  │ • data_cadastro     │              └──────────┬──────────┘
+  └──────────┬──────────┘                         │
+             │                                    │
+             │                                    │
+             │        ┌──────────────────┐        │
+             │        │  EMPRÉSTIMOS     │        │
+             │        ├──────────────────┤        │
+             └───────►│ • id (PK)        │◄───────┘
+                      │ • livro_id (FK)  │
+                      │ • usuario_id(FK) │
+                      │ • data_emprest.  │
+                      │ • data_prev_dev. │
+                      │ • data_devolucao │
+                      │ • status         │
+                      │ • observacoes    │
+                      └──────────────────┘
+
+  Relacionamentos:
+  • LIVROS 1 ────────── N EMPRÉSTIMOS (Um livro pode ter vários empréstimos)
+  • USUÁRIOS 1 ────────── N EMPRÉSTIMOS (Um usuário pode ter vários empréstimos)
+
+═══════════════════════════════════════════════════════════════════════════
+  ARQUITETURA DO SISTEMA
+═══════════════════════════════════════════════════════════════════════════
+
+  ┌───────────────────────────────────────────────────────────────┐
+  │                      CAMADA DE APRESENTAÇÃO                   │
+  │                        (Interface Web)                        │
+  ├───────────────────────────────────────────────────────────────┤
+  │  • index.php (Login)          • livros.php                    │
+  │  • dashboard.php              • livro_cadastrar.php           │
+  │  • emprestimos.php            • livro_editar.php              │
+  │  • usuarios.php               • devolucao.php                 │
+  │                                                                │
+  │  Framework: Bootstrap 5.3 + Bootstrap Icons                   │
+  └───────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+  ┌───────────────────────────────────────────────────────────────┐
+  │                      CAMADA DE LÓGICA                         │
+  │                         (PHP 8.x)                             │
+  ├───────────────────────────────────────────────────────────────┤
+  │  • config/dados.php (Configurações e funções utilitárias)     │
+  │  • includes/menu.php (Componentes reutilizáveis)              │
+  │                                                                │
+  │  Funções:                                                      │
+  │  - verificarLogin()                                            │
+  │  - getNomeUsuario()                                            │
+  │  - isAdmin()                                                   │
+  │  - formatarData()                                              │
+  │  - calcularDiasAtraso()                                        │
+  └───────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+  ┌───────────────────────────────────────────────────────────────┐
+  │                    CAMADA DE PERSISTÊNCIA                     │
+  │                      (MySQL/MariaDB)                          │
+  ├───────────────────────────────────────────────────────────────┤
+  │  Banco de Dados: biblioteca_db                                │
+  │                                                                │
+  │  Tabelas:                                                      │
+  │  • livros (8 registros exemplo)                               │
+  │  • usuarios (5 registros exemplo)                             │
+  │  • emprestimos (4 registros exemplo)                          │
+  │                                                                │
+  │  Tecnologia: MySQLi (Prepared Statements)                     │
+  └───────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════
+  FLUXO DE EMPRÉSTIMO
+═══════════════════════════════════════════════════════════════════════════
+
+  Registrar Empréstimo:
+  ────────────────────
+
+    [Usuário seleciona livro e leitor]
+              │
+              ▼
+    ┌──────────────────────┐
+    │ Verificar se livro   │
+    │ está disponível      │
+    └──────┬───────────────┘
+           │
+           ▼ [Disponível]
+    ┌──────────────────────┐
+    │ BEGIN TRANSACTION    │
+    └──────┬───────────────┘
+           │
+           ├─► Inserir registro em emprestimos
+           │   (status = 'ativo')
+           │
+           ├─► Decrementar quantidade_disponivel
+           │   no livro
+           │
+           ▼
+    ┌──────────────────────┐
+    │ COMMIT               │
+    └──────────────────────┘
+
+
+  Registrar Devolução:
+  ───────────────────
+
+    [Usuário clica em "Devolver"]
+              │
+              ▼
+    ┌──────────────────────┐
+    │ Calcular dias de     │
+    │ atraso               │
+    └──────┬───────────────┘
+           │
+           ▼
+    ┌──────────────────────┐
+    │ BEGIN TRANSACTION    │
+    └──────┬───────────────┘
+           │
+           ├─► Atualizar emprestimos
+           │   (data_devolucao = hoje, status = 'devolvido')
+           │
+           ├─► Incrementar quantidade_disponivel
+           │   no livro
+           │
+           ▼
+    ┌──────────────────────┐
+    │ COMMIT               │
+    └──────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════
+  CICLO CRUD - LIVROS
+═══════════════════════════════════════════════════════════════════════════
+
+    CREATE                READ                UPDATE              DELETE
+      ↓                    ↓                    ↓                   ↓
+  ┌────────┐          ┌────────┐          ┌────────┐          ┌────────┐
+  │Cadastar│          │Listar  │          │ Editar │          │Excluir │
+  │ Livro  │          │Livros  │          │ Livro  │          │ Livro  │
+  └────┬───┘          └────┬───┘          └────┬───┘          └────┬───┘
+       │                   │                   │                   │
+       ▼                   ▼                   ▼                   ▼
+  Formulário           SELECT *            SELECT por ID      Verificar se
+  de entrada          FROM livros         para preencher     tem empréstimo
+       │                   │              formulário          ativo
+       ▼                   ▼                   │                   │
+  Validar dados      Exibir em              Validar             DELETE
+       │             tabela HTML            alterações          FROM livros
+       ▼                   │                   │                 WHERE id = ?
+  INSERT INTO             ▼                   ▼                      │
+  livros                 [FIM]             UPDATE                   ▼
+       │                                   livros SET...          [FIM]
+       ▼                                        │
+     [FIM]                                      ▼
+                                              [FIM]
+
+═══════════════════════════════════════════════════════════════════════════
+  ESTADOS DE UM EMPRÉSTIMO
+═══════════════════════════════════════════════════════════════════════════
+
+    ┌──────────────┐
+    │   ATIVO      │  ◄─── Empréstimo registrado
+    │              │       (data_devolucao = NULL)
+    └──────┬───────┘
+           │
+           ├───► [Hoje > Data Prevista] ──► ┌──────────────┐
+           │                                 │  ATRASADO    │
+           │                                 └──────────────┘
+           │
+           └───► [Usuário devolve] ─────────► ┌──────────────┐
+                                               │  DEVOLVIDO   │
+                                               │              │
+                                               └──────────────┘
+
+═══════════════════════════════════════════════════════════════════════════
+  TECNOLOGIAS UTILIZADAS
+═══════════════════════════════════════════════════════════════════════════
+
+  ┌──────────────────────────────────────────────────────────────┐
+  │  Frontend                                                     │
+  ├──────────────────────────────────────────────────────────────┤
+  │  • HTML5                                                      │
+  │  • Bootstrap 5.3 (Framework CSS)                             │
+  │  • Bootstrap Icons                                            │
+  │  • JavaScript (incluído no Bootstrap)                        │
+  └──────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────────┐
+  │  Backend                                                      │
+  ├──────────────────────────────────────────────────────────────┤
+  │  • PHP 8.x                                                    │
+  │  • MySQLi (com Prepared Statements)                          │
+  │  • Sessões PHP                                                │
+  └──────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────────┐
+  │  Banco de Dados                                               │
+  ├──────────────────────────────────────────────────────────────┤
+  │  • MySQL 8.x / MariaDB                                        │
+  │  • InnoDB Engine                                              │
+  │  • UTF-8 (utf8mb4)                                            │
+  └──────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────────┐
+  │  Servidor                                                     │
+  ├──────────────────────────────────────────────────────────────┤
+  │  • Apache 2.4                                                 │
+  │  • XAMPP (Ambiente de desenvolvimento local)                 │
+  │  • phpMyAdmin (Administração do banco)                       │
+  └──────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════
