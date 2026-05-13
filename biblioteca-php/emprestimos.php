@@ -2,7 +2,7 @@
 require_once 'config/dados.php';
 verificarLogin();
 
-// Buscar empréstimos procurando pelo sql
+# Pedindo para o SGBD encontrar os emprestimos
 $emprestimos = $conn->query("
     SELECT e.*, l.titulo, l.autor, u.nome as usuario_nome
     FROM emprestimos e
