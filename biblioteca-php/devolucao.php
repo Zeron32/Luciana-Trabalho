@@ -5,7 +5,7 @@ verificarLogin();
 $id = $_GET['id'] ?? 0;
 
 if ($id > 0) {
-    // Buscar empréstimo
+    # Função para encontrar emprestimos
     $stmt = $conn->prepare("
         SELECT e.*, l.titulo, u.nome as usuario_nome
         FROM emprestimos e
@@ -25,21 +25,21 @@ if ($id > 0) {
     $emprestimo = $result->fetch_assoc();
     $stmt->close();
 
-    // Processar devolução
+    # Função para devolver o livro
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data_devolucao = date('Y-m-d');
 
-        // Iniciar transação
+        # Começar a transação
         $conn->begin_transaction();
 
         try {
-            // Atualizar empréstimo
+            # Atualizar
             $stmt = $conn->prepare("UPDATE emprestimos SET data_devolucao = ?, status = 'devolvido' WHERE id = ?");
             $stmt->bind_param("si", $data_devolucao, $id);
             $stmt->execute();
             $stmt->close();
 
-            // Atualizar quantidade disponível
+            # Atualização de quantidade
             $stmt = $conn->prepare("UPDATE livros SET quantidade_disponivel = quantidade_disponivel + 1 WHERE id = ?");
             $stmt->bind_param("i", $emprestimo['livro_id']);
             $stmt->execute();
