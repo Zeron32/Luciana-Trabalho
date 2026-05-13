@@ -2,13 +2,13 @@
 require_once 'config/dados.php';
 verificarLogin();
 
-// Buscar estatísticas dos livros
+# Saber quantidade dos livros que estão emprestados 
 $totalLivros = $conn->query("SELECT COUNT(*) as total FROM livros")->fetch_assoc()['total'];
 $totalUsuarios = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE tipo = 'leitor'")->fetch_assoc()['total'];
 $emprestimosAtivos = $conn->query("SELECT COUNT(*) as total FROM emprestimos WHERE status = 'ativo'")->fetch_assoc()['total'];
 $emprestimosAtrasados = $conn->query("SELECT COUNT(*) as total FROM emprestimos WHERE status = 'atrasado' OR (status = 'ativo' AND data_prevista_devolucao < CURDATE())")->fetch_assoc()['total'];
 
-// Empréstimos recentes por usúario
+# Emprestimos que foram realizados a pouco tempo
 $emprestimosRecentes = $conn->query("
     SELECT e.*, l.titulo, u.nome as usuario_nome
     FROM emprestimos e
