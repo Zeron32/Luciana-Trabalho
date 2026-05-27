@@ -25,21 +25,21 @@ if ($id > 0) {
     $emprestimo = $result->fetch_assoc();
     $stmt->close();
 
-    # Função para devolver o livro
+     # Função para devolver o livro
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data_devolucao = date('Y-m-d');
 
-        # Começar a transação
+         # Começar a transação
         $conn->begin_transaction();
 
         try {
-            # Atualizar
+            // Atualizar empréstimo
             $stmt = $conn->prepare("UPDATE emprestimos SET data_devolucao = ?, status = 'devolvido' WHERE id = ?");
             $stmt->bind_param("si", $data_devolucao, $id);
             $stmt->execute();
             $stmt->close();
 
-            # Atualização de quantidade
+            // Atualizar quantidade disponível
             $stmt = $conn->prepare("UPDATE livros SET quantidade_disponivel = quantidade_disponivel + 1 WHERE id = ?");
             $stmt->bind_param("i", $emprestimo['livro_id']);
             $stmt->execute();

@@ -1,6 +1,7 @@
 <?php
 require_once 'config/dados.php';
 # Login de usuarios 
+
 $erro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

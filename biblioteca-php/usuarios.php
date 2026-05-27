@@ -16,7 +16,7 @@ $usuarios = $conn->query("SELECT * FROM usuarios ORDER BY nome ASC");
 </head>
 <body class="bg-light">
     <?php include 'includes/menu.php'; ?>
-# Lugar para Gerenciar usúarios 
+
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1><i class="bi bi-people"></i> Gerenciar Usuários</h1>

@@ -2,6 +2,7 @@
 require_once 'config/dados.php';
 verificarLogin();
 # Local para cadastrar livros
+
 $sucesso = '';
 $erro = '';
 
